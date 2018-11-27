@@ -1,0 +1,1 @@
+include ':app', ':yivintest', ':test2', ':libvlc-android'
