@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.PixelFormat;
+import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,23 +14,20 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.util.zip.Inflater;
 
-import tv.danmaku.ijk.media.player.IMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-
-public class FlowViewActivity extends Activity {
+public class FlowTextureActivity extends Activity {
 
     private WindowManager windowManager;
 
@@ -37,7 +35,7 @@ public class FlowViewActivity extends Activity {
     private RelativeLayout relativeLayout;
     private float lastX, lastY, start_X, start_Y;
     WindowManager.LayoutParams params;
-    private SurfaceView surfaceView, flowSV;
+    private TextureView surfaceView, flowSV;
     private SurfaceHolder holder1, holder2;
     private MediaPlayer mediaPlayer;
     View view;
@@ -50,7 +48,7 @@ public class FlowViewActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_flow_view);
+        setContentView(R.layout.activity_texture_view);
         view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.view_flow, null);
         relativeLayout = view.findViewById(R.id.flow_rl);
         tv = findViewById(R.id.flow_tv);
@@ -75,8 +73,27 @@ public class FlowViewActivity extends Activity {
             AssetFileDescriptor afd = getAssets().openFd("test.mp4");
             mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 //                        mediaPlayer.setDataSource(URLMP4);
-            holder1 = surfaceView.getHolder();
-            holder1.addCallback(new MyHolder(1));
+            surfaceView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+                @Override
+                public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+                    mediaPlayer.setSurface(new Surface(surface));
+                }
+
+                @Override
+                public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+
+                }
+
+                @Override
+                public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+                    return false;
+                }
+
+                @Override
+                public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
+                }
+            });
             mediaPlayer.prepareAsync();
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
@@ -126,10 +143,10 @@ public class FlowViewActivity extends Activity {
 //        flowSV = view.findViewById(R.id.flow_sv);
 //        holder2 = flowSV.getHolder();
 //        holder2.addCallback(new MyHolder(2));
-       ViewParent parent = surfaceView.getParent();
-       if(parent!=null){
-           ((ViewGroup)parent).removeAllViews();
-       }
+        ViewParent parent = surfaceView.getParent();
+        if (parent != null) {
+            ((ViewGroup) parent).removeAllViews();
+        }
         relativeLayout.addView(surfaceView);
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override

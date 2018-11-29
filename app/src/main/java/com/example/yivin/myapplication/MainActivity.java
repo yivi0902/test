@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 context = MainActivity.this;
-                startActivity(new Intent(MainActivity.this,FlowViewActivity.class));
+                startActivity(new Intent(MainActivity.this,FlowTextureActivity.class));
             }
         });
 

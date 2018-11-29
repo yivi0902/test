@@ -3,9 +3,5 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:id="@+id/flow_rl">
 
-    <SurfaceView
-        android:id="@+id/flow_sv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+
 </RelativeLayout>
